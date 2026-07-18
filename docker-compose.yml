@@ -1,0 +1,32 @@
+services:
+
+  laravel:
+    build: .
+    user: "1000:1000"
+    container_name: laravel_app
+
+    ports:
+      - "8080:80"
+
+    volumes:
+      - ./src:/var/www/html
+      - ./docker/apache/000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+
+    working_dir: /var/www/html
+
+  mariadb:
+    image: mariadb:11
+
+    container_name: laravel_db
+
+    restart: always
+
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: 
+
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - ./db/dados:/var/lib/mysql
