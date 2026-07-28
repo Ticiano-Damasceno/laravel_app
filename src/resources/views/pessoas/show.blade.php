@@ -12,7 +12,7 @@
             @foreach ($pessoa->telefones as $telefone)
                 <li class="flex items-center justify-between py-2">
                     <span class="text-gray-700">{{ $telefone->numero }}</span>
-
+                    <span class="text-gray-700">{{ $telefone->tipo }}</span>
                     <div class="flex gap-4 items-center">
                         <x-link-button href="{{ route('telefones.edit', $telefone) }}">Editar</x-link-button>
 
@@ -36,6 +36,19 @@
                 placeholder="Novo telefone"
                 class="flex-1 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
             >
+            @error('numero')
+                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+            @enderror
+
+            <select name="tipo" class="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                <option value="celular">Celular</option>
+                <option value="residencial">Residencial</option>
+                <option value="comercial">Comercial</option>
+            </select>
+            @error('tipo')
+                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+            @enderror
+
             <x-secondary-button type="submit">Adicionar</x-secondary-button>
         </form>
     </div>

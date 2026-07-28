@@ -10,6 +10,9 @@
                 <li class="flex items-center justify-between py-3">
                     <span class="text-gray-800">
                         {{ $pessoa->nome }} ({{ $pessoa->idade }} anos)
+                        <span class="text-sm text-gray-500">
+                            [{{ strtoupper($pessoa->status) }}]
+                        </span>
                     </span>
 
                     <div class="flex gap-4 items-center">

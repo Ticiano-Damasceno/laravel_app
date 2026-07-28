@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PessoaRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Pessoa;
+use App\Models\User;
 
 class PessoaController extends Controller
 {
@@ -12,10 +14,9 @@ class PessoaController extends Controller
     {
         $this->authorize("viewAny", Pessoa::class);
 
-        $pessoas = auth()->user()->role==='admin'
+        $pessoas = Auth::user()->role === 'admin'
             ? Pessoa::orderBy('id')->get()
-            : Pessoa::where('user_id', auth()->id())->orderBy('id')->get();
-        ;
+            : Pessoa::where('user_id', Auth::id())->where('status','aprovado')->orderBy('id')->get();
 
         return view(
             'pessoas.index',
@@ -32,31 +33,37 @@ class PessoaController extends Controller
     public function create()
     {
         $this->authorize('create', Pessoa::class);
-        return view('pessoas.create');
+        $usuarios = User::where('role','visualizador')->get();
+        return view('pessoas.create', compact('usuarios'));
     }
 
     public function store(PessoaRequest $request)
     {
         $this->authorize('create', Pessoa::class);
 
+        $user_id = Auth::id();
+        if (Auth::user()->role === 'admin') {
+            $user_id = $request->user_id;
+        }
+
         Pessoa::create([
             ...$request->only('nome', 'idade'),
-            'user_id' => auth()->id(),
+            'user_id' => $user_id,
         ]);
-        return redirect('/pessoas')->with('sucesso','Pessoa cadastrada com sucesso!');
+        return redirect('/pessoas')->with('sucesso', 'Pessoa cadastrada com sucesso!');
     }
 
     public function destroy(Pessoa $pessoa)
     {
         $this->authorize('delete', $pessoa);
         $pessoa->delete();
-        return redirect('/pessoas')->with('sucesso','Pessoa removida com sucesso!');;
+        return redirect('/pessoas')->with('sucesso', 'Pessoa removida com sucesso!');
     }
 
     public function edit(Pessoa $pessoa)
     {
         $this->authorize('update', $pessoa);
-        return view('pessoas.edit',compact('pessoa'));
+        return view('pessoas.edit', compact('pessoa'));
     }
 
     public function update(PessoaRequest $request, Pessoa $pessoa)
@@ -64,6 +71,68 @@ class PessoaController extends Controller
         $this->authorize('update', $pessoa);
 
         $pessoa->update($request->only('nome', 'idade'));
-        return redirect('/pessoas')->with('sucesso','Pessoa atualizada com sucesso!');;
+        return redirect('/pessoas')->with('sucesso', 'Pessoa atualizada com sucesso!');
+    }
+
+    public function gerenciar()
+    {
+        $pessoas = Pessoa::with('user')
+            ->orderBy('nome')
+            ->get();
+
+        $usuarios = User::where('role', 'visualizador')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.gerenciar-pessoas', compact('pessoas', 'usuarios'));
+    }
+
+    public function salvarProprietarios(Request $request)
+    {
+        $request->validate([
+            'usuarios' => ['required', 'array'],
+        ]);
+
+        foreach ($request->usuarios as $pessoaId => $userId) {
+            $pessoa = Pessoa::find($pessoaId);
+
+            if ($pessoa && $pessoa->user_id != $userId) {
+                $pessoa->update([
+                    'user_id' => $userId
+                ]);
+            }
+        }
+
+        return redirect()
+            ->route('gerenciar-pessoas')
+            ->with('sucesso', 'Proprietários atualizados com sucesso.');
+    }
+
+    public function pendencias()
+    {
+        $pessoas = Pessoa::with('user')
+            ->where('status', 'pendente')
+            ->orderBy('nome')
+            ->get();
+
+        return view('admin.pendencias', compact('pessoas'));
+    }
+
+    public function aprovar(Pessoa $pessoa)
+    {
+        $pessoa->update(['status' => 'aprovado']);
+
+        return redirect()
+            ->route('pessoas.pendencias')
+            ->with('sucesso', 'Pessoa aprovada com sucesso.');
+    }
+
+    public function rejeitar(Pessoa $pessoa)
+    {
+        $pessoa->update(['status' => 'rejeitado']);
+
+        return redirect()
+            ->route('pessoas.pendencias')
+            ->with('sucesso', 'Pessoa rejeitada com sucesso.');
     }
 }

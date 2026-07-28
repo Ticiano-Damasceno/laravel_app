@@ -14,6 +14,16 @@ services:
 
     working_dir: /var/www/html
 
+  scheduler:
+    build: .
+    user: "1000:1000"
+    container_name: laravel_scheduler
+    command: php artisan schedule:work
+    volumes:
+      - ./src:/var/www/html
+    depends_on: 
+      - laravel
+
   mariadb:
     image: mariadb:11
 
@@ -23,7 +33,7 @@ services:
 
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: 
+      MYSQL_DATABASE: laravel
 
     ports:
       - "3307:3306"
