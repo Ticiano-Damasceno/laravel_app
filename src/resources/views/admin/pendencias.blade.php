@@ -35,9 +35,25 @@
                     </td>
 
                     <td class="px-6 py-4">
-                        {{ ucfirst($pessoa->status) }}
+                        @if($pessoa->status === 'pendente')
+                        <span class="text-yellow-600 font-semibold">
+                            Pendente
+                        </span>
+                        @elseif($pessoa->status === 'processando')
+                        <span class="text-blue-600 font-semibold">
+                            Processando
+                        </span>
+                        @elseif($pessoa->status === 'aprovado')
+                        <span class="text-green-600 font-semibold">
+                            Aprovado
+                        </span>
+                        @else
+                        <span class="text-red-600 font-semibold">
+                            Rejeitado
+                        </span>
+                        @endif
                     </td>
-
+                    @if($pessoa->status === 'pendente')
                     <td class="px-6 py-4">
                         <div class="flex gap-2">
 
@@ -61,7 +77,7 @@
 
                         </div>
                     </td>
-
+                    @endif
                 </tr>
 
                 @endforeach

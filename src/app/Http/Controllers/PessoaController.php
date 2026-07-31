@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pessoa;
 use App\Models\User;
+use App\Jobs\AprovarPessoaJob;
 
 class PessoaController extends Controller
 {
@@ -111,7 +112,7 @@ class PessoaController extends Controller
     public function pendencias()
     {
         $pessoas = Pessoa::with('user')
-            ->where('status', 'pendente')
+            ->whereIn('status',['pendente','processando'])
             ->orderBy('nome')
             ->get();
 
@@ -120,11 +121,15 @@ class PessoaController extends Controller
 
     public function aprovar(Pessoa $pessoa)
     {
-        $pessoa->update(['status' => 'aprovado']);
+        $pessoa->update([
+            'status'=> 'processando',
+        ]);
+
+        AprovarPessoaJob::dispatch($pessoa);
 
         return redirect()
             ->route('pessoas.pendencias')
-            ->with('sucesso', 'Pessoa aprovada com sucesso.');
+            ->with('sucesso', 'Processo de aprovação iniciado...');
     }
 
     public function rejeitar(Pessoa $pessoa)

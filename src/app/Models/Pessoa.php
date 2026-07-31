@@ -6,7 +6,7 @@ namespace App\Models;
 use App\Observers\PessoaObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 /**
  * @property int $id
  * @property string $nome
@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
 #[ObservedBy(PessoaObserver::class)]
 class Pessoa extends Model
 {
+    use HasFactory;
     protected $fillable = [
         "nome",
         "idade",
