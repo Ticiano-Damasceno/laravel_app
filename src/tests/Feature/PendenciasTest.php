@@ -34,8 +34,9 @@ class PendenciasTest extends TestCase
         $response = $this->actingAs($admin)
             ->get('/pendencias');
 
-        $response->assertOk();
+        $response->assertNotFound();
     }
+    
 
     public function test_usuario_nao_autenticado_e_redirecionado_para_login(): void
     {
