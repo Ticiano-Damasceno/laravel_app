@@ -1,0 +1,1 @@
+O worker no compose precisa entrar na documentação da dupla 2, junto com o scheduler — são serviços de infraestrutura sem os quais a aplicação parece funcionar mas não completa fluxos. É um bom exemplo concreto de gestão de configuração.
