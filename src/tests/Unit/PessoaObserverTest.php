@@ -18,6 +18,7 @@ class PessoaObserverTest extends TestCase
         $this->assertEquals('pendente', $pessoa->status);
     }
 
+    
     public function test_creating_normaliza_o_nome(): void
     {
         $pessoa = new Pessoa();
