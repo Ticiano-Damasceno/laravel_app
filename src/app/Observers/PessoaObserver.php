@@ -14,16 +14,22 @@ class PessoaObserver
 
     public function creating(Pessoa $pessoa): void
     {
-        $pessoa->nome = ucwords(
-            strtolower($pessoa->nome)
-        );
+        // Versão anterior com bug no teste PessoaObserverTest.php
+        // $pessoa->nome = ucwords(
+        //     strtolower($pessoa->nome)
+        // ); 
+
+        $pessoa->nome = mb_convert_case($pessoa->nome, MB_CASE_TITLE, 'UTF-8');
         $pessoa->status = 'pendente';
     }
 
     public function updating(Pessoa $pessoa): void
     {
-        $pessoa->nome = ucwords(
-            strtolower($pessoa->nome)
-        );
+        // Versão anterior com bug no teste PessoaObserverTest.php
+        // $pessoa->nome = ucwords(
+        //     strtolower($pessoa->nome)
+        // );
+
+        $pessoa->nome = mb_convert_case($pessoa->nome, MB_CASE_TITLE, 'UTF-8');
     }
 }
