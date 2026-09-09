@@ -1,1 +1,3 @@
 O worker no compose precisa entrar na documentação da dupla 2, junto com o scheduler — são serviços de infraestrutura sem os quais a aplicação parece funcionar mas não completa fluxos. É um bom exemplo concreto de gestão de configuração.
+
+Sobre o aviso de Node.js 20 depreciado: não é problema seu. É o runner do GitHub avisando que as actions que você usa (checkout@v4, setup-php@v2) rodam sobre Node 20, que está saindo de suporte na plataforma. Vale uma linha na documentação da dupla 2 mencionando que o pipeline gera esse aviso e por quê — mostra que a equipe leu os logs em vez de só olhar a cor.
