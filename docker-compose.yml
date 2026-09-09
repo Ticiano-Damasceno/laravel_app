@@ -24,6 +24,16 @@ services:
     depends_on: 
       - laravel
 
+  worker:
+    build: .
+    user: "1000:1000"
+    container_name: laravel_worker
+    command: php artisan queue:work --tries=3
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - laravel
+
   mariadb:
     image: mariadb:11
 
